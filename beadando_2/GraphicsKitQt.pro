@@ -4,8 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        label.cpp \
         listbox.cpp \
         main.cpp \
+        pushbutton.cpp \
         spinbox.cpp \
         widget.cpp \
         window.cpp
@@ -30,7 +32,9 @@ INCLUDEPATH += $$PWD/SDL2
 DEPENDPATH += $$PWD/SDL2
 
 HEADERS += \
+    label.h \
     listbox.h \
+    pushbutton.h \
     spinbox.h \
     widget.h \
     window.h
