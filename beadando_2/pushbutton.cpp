@@ -9,7 +9,7 @@ PushButton::PushButton(Window *w, int x, int y, int sx, int sy,std::string s)
     pushed = false;
     txt = s;
 }
-int f = 20;
+int f = 30;
 void PushButton::draw(bool focused)
 {
     int c = 150;
@@ -21,7 +21,7 @@ void PushButton::draw(bool focused)
         gout << move_to(_x+2, _y+2) << color(100,100,100) << box(_size_x-4, _size_y-4);
     else
         gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
-    gout << color(c,c,c)<<move_to(_x+4,_y+gout.cascent()+gout.cdescent()) << text(txt);
+    gout << color(c,c,c)<<move_to(_x+(_size_x/2)-4,_y+4+gout.cascent()+gout.cdescent()) << text(txt);
 }
 
 void PushButton::handle(event ev)
@@ -44,5 +44,9 @@ bool PushButton::get_current_value()
 std::string PushButton::get_current_text()
 {
     return txt;
+}
+void PushButton::set_current_text(std::string s)
+{
+    txt = s;
 }
 

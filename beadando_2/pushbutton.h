@@ -14,6 +14,7 @@ public:
     bool get_current_value();
     void reset();
     std::string get_current_text();
+    void set_current_text(std::string s);
 };
 
 #endif // PUSHBUTTON_H

@@ -1,6 +1,7 @@
 #include "window.h"
 #include "pushbutton.h"
 #include "label.h"
+#include "gamemaster.h"
 #include <iostream>
 
 using namespace std;
@@ -11,29 +12,34 @@ Window::Window() {}
 void Window::init()
 {
     gout.open(400,400);
-    gout << font("LiberationSans-Regular.ttf",20);
-    bamm = 0;
+    gout << font("LiberationSans-Regular.ttf",30);
+    gm.init();
     event_loop();
+    white = false;
 }
 void Window::pass_values()
 {
-    for (Widget * wg : widgets)
+    for(int i = 0; i < 64; i++)
     {
-        if (auto* pb = dynamic_cast<PushButton*>(wg))
+        if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
         {
             if(pb->get_current_value()==true)
             {
-                bamm = bamm * 10 + stoi(pb->get_current_text());
+                if(white)
+                {
+                    gm.set_state(i/8,i%8,'w');
+                    pb->set_current_text("O");
+                    white = false;
+                }
+                else
+                {
+                    gm.set_state(i/8,i%8,'b');
+                    pb->set_current_text("X");
+                    white = true;
+                }
+                cout << white << endl;
+                pb->reset();
             }
-            pb->reset();
-        }
-
-    }
-    for (Widget * wg : widgets)
-    {
-        if (auto* lb = dynamic_cast<Label*>(wg))
-        {
-            lb->set_text(bamm);
         }
     }
 }

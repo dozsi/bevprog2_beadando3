@@ -1,12 +1,13 @@
 #ifndef WINDOW_H
 #define WINDOW_H
-
+#include "gamemaster.h"
 #include "widget.h"
 
 struct Window{
 protected:
     std::vector<Widget *> widgets;
-    int bamm;
+    GameMaster gm;
+    bool white;
 public:
     Window();
     void event_loop();

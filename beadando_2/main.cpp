@@ -1,15 +1,23 @@
 #include "pushbutton.h"
 #include "label.h"
 #include "window.h"
+#include <vector>
+#include <iostream>
+
+using namespace std;
 
 struct W : public Window
 {
-    Label * l1;
-    PushButton * p1;
+    PushButton* pb;
     W()
     {
-        l1 = new Label(this,10,30,150,30,0);
-        p1 = new PushButton(this,10,70,30,30,"1");
+        for(int i = 0; i < 8; i++)
+        {
+            for(int j = 0; j < 8; j++)
+            {
+                pb = new PushButton(this,40+j*40,40+i*40,40,40,"");
+            }
+        }
     }
 };
 
