@@ -1,5 +1,5 @@
 #include "label.h"
-
+#include <iostream>
 using namespace genv;
 
 Label::Label(Window *w, int x, int y, int sx, int sy,int s)

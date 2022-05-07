@@ -26,7 +26,7 @@ void PushButton::draw(bool focused)
 
 void PushButton::handle(event ev)
 {
-    if(ev.pos_x > _x && ev.pos_x < _x+_size_x && ev.pos_y > _y && ev.pos_y < _y+_size_y && btn_left > 0 && ev.type == ev_mouse)
+    if(ev.pos_x > _x && ev.pos_x < _x+_size_x && ev.pos_y > _y && ev.pos_y < _y+_size_y && btn_left > 0 && ev.button < 0 && !pushed)
     {
         pushed = !pushed;
     }
