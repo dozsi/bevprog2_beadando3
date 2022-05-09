@@ -14,6 +14,7 @@ public:
     void registerwidget(Widget * w) {widgets.push_back(w);};
     void pass_values();
     void init();
+    void paint(int focus);
 };
 
 #endif // WINDOW_H

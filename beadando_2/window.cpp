@@ -19,37 +19,53 @@ void Window::init()
 }
 void Window::pass_values()
 {
-    for(int i = 0; i < 64; i++)
+    for(int i = 0; i < widgets.size(); i++)
     {
         if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
         {
             if(pb->get_current_value()==true)
             {
-                if(white)
+                if(white && gm.set_state(i/8,i%8,'w'))
                 {
-                    gm.set_state(i/8,i%8,'w');
-                    pb->set_current_text("O");
-                    white = false;
+                        white = false;
                 }
-                else
+                else if(gm.set_state(i/8,i%8,'b'))
                 {
-                    gm.set_state(i/8,i%8,'b');
-                    pb->set_current_text("X");
-                    white = true;
+                        white = true;
                 }
-                cout << white << endl;
                 pb->reset();
             }
         }
     }
 }
+
+void Window::paint(int focus)
+{
+    for(int i = 0; i <  widgets.size(); i++)
+    {
+        if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
+        {
+            if(gm.state_vector[i/8][i%8] == 'b')
+                pb->set_current_text("X");
+            if(gm.state_vector[i/8][i%8] == 'w')
+                pb->set_current_text("O");
+        }
+    }
+    for (Widget * w : widgets)
+    {
+        if(focus >= 0 && w == widgets[focus])
+            w->draw(true);
+        else
+            w->draw(false);
+    }
+    gout << refresh;
+}
+
 void Window::event_loop()
 {
-    for (Widget * wg : widgets)
-        wg->draw(false);
-    gout << refresh;
-    event ev;
     int focus = -1;
+    paint(focus);
+    event ev;
     while(gin >> ev  && ev.keycode != key_escape)
     {
         if (ev.type == ev_mouse && ev.button == btn_left)
@@ -59,13 +75,7 @@ void Window::event_loop()
         if (focus!=-1)
             widgets[focus]->handle(ev);
         pass_values();
-        for (Widget * w : widgets)
-        {
-            if(w == widgets[focus])
-                w->draw(true);
-            else
-                w->draw(false);
-        }
+        paint(focus);
         gout << refresh;
     }
 }
