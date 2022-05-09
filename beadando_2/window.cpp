@@ -51,12 +51,21 @@ void Window::paint(int focus)
                 pb->set_current_text("O");
         }
     }
-    for (Widget * w : widgets)
+    for (int i = 0; i <  widgets.size(); i++)
     {
-        if(focus >= 0 && w == widgets[focus])
-            w->draw(true);
-        else
-            w->draw(false);
+
+        if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
+        {
+            if(focus >= 0 && widgets[i] == widgets[focus])
+                pb->draw(int(1));
+            if(gm.state_vector[i/8][i%8] == 'a')
+            {
+                pb->draw(3);
+            }
+            else
+                pb->draw(int(0));
+        }
+
     }
     gout << refresh;
 }

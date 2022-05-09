@@ -12,12 +12,8 @@ struct W : public Window
     W()
     {
         for(int i = 0; i < 8; i++)
-        {
             for(int j = 0; j < 8; j++)
-            {
                 pb = new PushButton(this,40+j*40,40+i*40,40,40,"");
-            }
-        }
     }
 };
 

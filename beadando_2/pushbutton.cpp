@@ -23,6 +23,29 @@ void PushButton::draw(bool focused)
         gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
     gout << color(c,c,c)<<move_to(_x+(_size_x/2)-4,_y+4+gout.cascent()+gout.cdescent()) << text(txt);
 }
+void PushButton::draw(int focused)
+{
+    /// 0-ures, 1-safe, 2-captured
+    int r = 150;
+    int g = 150;
+    int b = 150;
+    gout << font("LiberationSans-Regular.ttf",f);
+    gout << move_to(_x, _y) << color(r,g,b) << box(_size_x, _size_y);
+    if(focused == 0)
+    {
+        gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
+    }
+    else if(focused == 1)
+    {
+        r = 50;
+        g = 255;
+        b = 50;
+        gout << move_to(_x+2, _y+2) << color(r,g,b) << box(_size_x-4, _size_y-4);
+        gout << move_to(_x+4, _y+4) << color(0,0,0) << box(_size_x-8, _size_y-8);
+        return;
+    }
+    gout << color(r,g,b)<<move_to(_x+(_size_x/2)-4,_y+4+gout.cascent()+gout.cdescent()) << text(txt);
+}
 
 void PushButton::handle(event ev)
 {

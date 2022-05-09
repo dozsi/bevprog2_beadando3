@@ -28,6 +28,7 @@ void GameMaster::init()
         state_vector.push_back(temp);
         temp.clear();
     }
+    available('b');
 }
 char GameMaster::get_state(int x, int y)
 {
@@ -68,16 +69,14 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
             ok3 = false;
             break;
         }
-        if(state_vector[_x][_y] == ' ')
+        if(state_vector[_x][_y] != 'w' && state_vector[_x][_y] != 'b')
         {
             ok1 = false;
-            //cout << "nemjo" << endl;
             break;
         }
         else if(state_vector[_x][_y] == state_vector[x][y])
         {
             ok2 = true;
-            //cout << "jo" << endl;
             break;
         }
         else
@@ -90,14 +89,20 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
     else
         return 0;
 }
-void GameMaster::available()
+void GameMaster::available(char c)
 {
+    char _c;
+    if (c == 'b')
+        _c = 'w';
+    else
+        _c = 'b';
     for(int k = 0; k < 8; k++)
     {
         for(int l = 0; l < 8; l++)
         {
             if(state_vector[k][l] == ' ')
             {
+                state_vector[k][l] = _c;
                 for(int i = -1;i <= 1;i++)
                 {
                     for(int j = -1;j <= 1;j++)
@@ -108,21 +113,49 @@ void GameMaster::available()
                         }
                     }
                 }
+                if(state_vector[k][l] == _c)
+                {
+                    state_vector[k][l] = ' ';
+                }
+            }
+        }
+    }
+
+    for(int k = 0; k < 8; k++)
+    {
+        for(int l = 0; l < 8; l++)
+        {
+            cout << state_vector[k][l];
+        }
+        cout << endl;
+    }
+}
+void GameMaster::reset_available()
+{
+    for(int k = 0; k < 8; k++)
+    {
+        for(int l = 0; l < 8; l++)
+        {
+            if(state_vector[k][l] == 'a')
+            {
+                state_vector[k][l] = ' ';
             }
         }
     }
 }
+
 bool GameMaster::set_state(int x, int y,char c)
 {
-    if(state_vector[x][y] != ' ')
-    {
-        return false;
-    }
-    else
+    if(state_vector[x][y] != 'w' && state_vector[x][y] != 'b' && state_vector[x][y] == 'a' )
     {
         state_vector[x][y] = c;
         color(x,y);
-        //get_available();
+        reset_available();
+        available(c);
         return true;
+    }
+    else
+    {
+        return false;
     }
 }

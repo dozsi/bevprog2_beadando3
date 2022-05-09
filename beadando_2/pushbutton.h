@@ -11,6 +11,7 @@ public:
     PushButton(Window *w, int x, int y, int sx, int sy,std::string s);
     virtual void draw(bool focused) override;
     virtual void handle(genv::event ev) override;
+    void draw(int focused);
     bool get_current_value();
     void reset();
     std::string get_current_text();

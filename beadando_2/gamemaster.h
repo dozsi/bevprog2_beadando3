@@ -12,7 +12,8 @@ public:
     bool set_state(int x, int y,char c);
     int get_available(int x,int y, int ix, int iy);
     void color(int x,int y);
-    void available();
+    void available(char c);
+    void reset_available();
 };
 
 #endif // GAMEMASTER_H
