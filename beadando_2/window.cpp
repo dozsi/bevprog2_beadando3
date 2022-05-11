@@ -77,9 +77,10 @@ void Window::paint(int focus)
             {
                 pb->draw(1);
             }
-            if(gm.state_vector[i/8][i%8] == 'p')
+            else if(gm.state_vector[i/8][i%8] == 'p')
             {
                 pb->draw(2);
+                cout << "predict" << endl;
             }
             else
                 pb->draw(0);
@@ -96,12 +97,12 @@ void Window::event_loop()
     event ev;
     while(gin >> ev  && ev.keycode != key_escape)
     {
-        if (ev.type == ev_mouse)
+        if (ev.type == ev_mouse && ev.pos_x >= 40 && ev.pos_y >= 40)
             for (size_t i=0;i<widgets.size();i++)
                 if (widgets[i]->is_selected(ev.pos_x, ev.pos_y))
                 {
                     focus = i;
-                    gm.predict_state(ev.pos_x/40-2, ev.pos_y%40-2,true);
+                    gm.predict_state(ev.pos_y/40-1, ev.pos_x/40-1,true);
                 }
         if (focus!=-1)
             widgets[focus]->handle(ev);

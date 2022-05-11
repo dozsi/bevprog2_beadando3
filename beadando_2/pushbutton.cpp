@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace genv;
+using namespace std;
 
 PushButton::PushButton(Window *w, int x, int y, int sx, int sy,std::string s)
     : Widget(w,x,y,sx,sy)
@@ -35,7 +36,7 @@ void PushButton::draw(int focused)
     {
         gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
     }
-    else if(focused == 2)
+    if(focused == 2)
     {
         r = 50;
         g = 50;
@@ -43,7 +44,7 @@ void PushButton::draw(int focused)
         gout << move_to(_x+2, _y+2) << color(r,g,b) << box(_size_x-4, _size_y-4);
         gout << move_to(_x+4, _y+4) << color(0,0,0) << box(_size_x-8, _size_y-8);
     }
-    else if(focused == 1)
+    if(focused == 1)
     {
         r = 50;
         g = 255;

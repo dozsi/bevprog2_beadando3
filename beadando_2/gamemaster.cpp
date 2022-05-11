@@ -29,6 +29,7 @@ void GameMaster::init(char c)
         temp.clear();
     }
     available(c);
+    current = c;
 }
 char GameMaster::get_state(int x, int y)
 {
@@ -42,15 +43,29 @@ void GameMaster::color(int x,int y,bool prediction)
         for(int j = -1;j <= 1;j++)
         {
             counter =  get_available(x,y,i,j);
+            //cout << counter << endl;
             for(int k = 1; k <= counter;k++)
             {
                 if(prediction)
-                    state_vector[x+(i*k)][y+(j*k)] = 'p';
+                {
+                    state_vector[x+(i*k)][y+(j*k)] = 'x';
+                    cout << "hello darkness my old friend" << endl;
+                }
                 else
+                {
                     state_vector[x+(i*k)][y+(j*k)] = state_vector[x][y];
+                }
             }
         }
     }
+//    for(int k = 0; k < 8; k++)
+//    {
+//        for(int l = 0; l < 8; l++)
+//        {
+//            cout << get_state(k,l);
+//        }
+//        cout << endl;
+//    }
 }
 int GameMaster::get_available(int x,int y, int ix, int iy)
 {
@@ -87,10 +102,16 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
             counter++;
         }
     }
+    //cout << "ok1: " << ok1 << " ok2: " << ok2 << " ok3: " << ok3 << endl;
     if(ok1 && ok2 && ok3)
+    {
+        //cout << "ok1: " << ok1 << " ok2: " << ok2 << " ok3: " << ok3 << endl;
         return counter;
+    }
     else
+    {
         return 0;
+    }
 }
 void GameMaster::available(char c)
 {
@@ -166,7 +187,7 @@ bool GameMaster::set_state(int x, int y,char c)
 {
     if(state_vector[x][y] == 'a' )
     {
-        cout << "set state fut" << endl;
+        current = c;
         state_vector[x][y] = c;
         color(x,y,false);
         return true;
@@ -181,7 +202,9 @@ void GameMaster::predict_state(int x, int y,char c)
 {
     if(state_vector[x][y] == 'a' )
     {
-        cout << "predict state fut" << endl;
+        current = c;
+        state_vector[x][y] = c;
         color(x,y,true);
+        state_vector[x][y] ='a';
     }
 }
