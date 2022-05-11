@@ -18,7 +18,7 @@ void PushButton::draw(bool focused)
     gout << font("LiberationSans-Regular.ttf",f);
     gout << move_to(_x, _y) << color(c,c,c) << box(_size_x, _size_y);
     if(pushed)
-        gout << move_to(_x+2, _y+2) << color(100,100,100) << box(_size_x-4, _size_y-4);
+        gout << move_to(_x+2, _y+2) << color(255,100,100) << box(_size_x-4, _size_y-4);
     else
         gout << move_to(_x+2, _y+2) << color(0,0,0) << box(_size_x-4, _size_y-4);
     gout << color(c,c,c)<<move_to(_x+(_size_x/2)-4,_y+4+gout.cascent()+gout.cdescent()) << text(txt);

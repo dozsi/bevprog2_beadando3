@@ -7,7 +7,7 @@ using namespace std;
 GameMaster::GameMaster()
 {
 }
-void GameMaster::init()
+void GameMaster::init(char c)
 {
     vector<char> temp;
     for(int i = 0; i < 8; i++)
@@ -15,20 +15,20 @@ void GameMaster::init()
         for(int j = 0; j < 8; j++)
         {
             if(i == 3 && j == 3)
-                temp.push_back('b');
+                temp.push_back('x');
             else if(i == 3 && j == 4)
-                temp.push_back('w');
+                temp.push_back('o');
             else if(i == 4 && j == 4)
-                temp.push_back('b');
+                temp.push_back('x');
             else if(i == 4 && j == 3)
-                temp.push_back('w');
+                temp.push_back('o');
             else
                 temp.push_back(' ');
         }
         state_vector.push_back(temp);
         temp.clear();
     }
-    available('b');
+    available(c);
 }
 char GameMaster::get_state(int x, int y)
 {
@@ -69,7 +69,7 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
             ok3 = false;
             break;
         }
-        if(state_vector[_x][_y] != 'w' && state_vector[_x][_y] != 'b')
+        if(state_vector[_x][_y] != 'o' && state_vector[_x][_y] != 'x')
         {
             ok1 = false;
             break;
@@ -91,18 +91,13 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
 }
 void GameMaster::available(char c)
 {
-    char _c;
-    if (c == 'b')
-        _c = 'w';
-    else
-        _c = 'b';
     for(int k = 0; k < 8; k++)
     {
         for(int l = 0; l < 8; l++)
         {
             if(state_vector[k][l] == ' ')
             {
-                state_vector[k][l] = _c;
+                state_vector[k][l] = c;
                 for(int i = -1;i <= 1;i++)
                 {
                     for(int j = -1;j <= 1;j++)
@@ -113,21 +108,12 @@ void GameMaster::available(char c)
                         }
                     }
                 }
-                if(state_vector[k][l] == _c)
+                if(state_vector[k][l] == c)
                 {
                     state_vector[k][l] = ' ';
                 }
             }
         }
-    }
-
-    for(int k = 0; k < 8; k++)
-    {
-        for(int l = 0; l < 8; l++)
-        {
-            cout << state_vector[k][l];
-        }
-        cout << endl;
     }
 }
 void GameMaster::reset_available()
@@ -143,15 +129,44 @@ void GameMaster::reset_available()
         }
     }
 }
+void GameMaster::counter()
+{
+    e_counter = 0;
+    o_counter = 0;
+    x_counter = 0;
+    a_counter = 0;
+    for(const vector<char> &cv : state_vector)
+    {
+        for(char c: cv)
+        {
+            if( c == ' ')
+                e_counter++;
+            else if( c == 'o')
+                o_counter++;
+            else if( c == 'x')
+                x_counter++;
+            else
+                a_counter++;
+        }        
+    }
+    //cout << "empty: " << e_counter << " O: " << o_counter << " X: " << x_counter << " A: " << a_counter << " sum: " << e_counter+o_counter+x_counter+a_counter << endl;
+}
+bool GameMaster::check_end(char c)
+{
+    reset_available();
+    available(c);
+    counter();
+    return(a_counter == 0);
+}
 
 bool GameMaster::set_state(int x, int y,char c)
 {
-    if(state_vector[x][y] != 'w' && state_vector[x][y] != 'b' && state_vector[x][y] == 'a' )
+    if(state_vector[x][y] == 'a' )
     {
         state_vector[x][y] = c;
         color(x,y);
-        reset_available();
-        available(c);
+        //check_end(c);
+        //cout << a_counter << endl;
         return true;
     }
     else

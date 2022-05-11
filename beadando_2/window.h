@@ -7,7 +7,7 @@ struct Window{
 protected:
     std::vector<Widget *> widgets;
     GameMaster gm;
-    bool white;
+    char c;
 public:
     Window();
     void event_loop();
