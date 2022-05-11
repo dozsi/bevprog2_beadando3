@@ -34,7 +34,7 @@ char GameMaster::get_state(int x, int y)
 {
     return state_vector[x][y];
 }
-void GameMaster::color(int x,int y)
+void GameMaster::color(int x,int y,bool prediction)
 {
     int counter = 0;
     for(int i = -1;i <= 1;i++)
@@ -44,7 +44,10 @@ void GameMaster::color(int x,int y)
             counter =  get_available(x,y,i,j);
             for(int k = 1; k <= counter;k++)
             {
-                state_vector[x+(i*k)][y+(j*k)] = state_vector[x][y];
+                if(prediction)
+                    state_vector[x+(i*k)][y+(j*k)] = 'p';
+                else
+                    state_vector[x+(i*k)][y+(j*k)] = state_vector[x][y];
             }
         }
     }
@@ -122,7 +125,7 @@ void GameMaster::reset_available()
     {
         for(int l = 0; l < 8; l++)
         {
-            if(state_vector[k][l] == 'a')
+            if(state_vector[k][l] == 'a' || state_vector[k][l] == 'p')
             {
                 state_vector[k][l] = ' ';
             }
@@ -147,7 +150,7 @@ void GameMaster::counter()
                 x_counter++;
             else
                 a_counter++;
-        }        
+        }
     }
     //cout << "empty: " << e_counter << " O: " << o_counter << " X: " << x_counter << " A: " << a_counter << " sum: " << e_counter+o_counter+x_counter+a_counter << endl;
 }
@@ -163,14 +166,22 @@ bool GameMaster::set_state(int x, int y,char c)
 {
     if(state_vector[x][y] == 'a' )
     {
+        cout << "set state fut" << endl;
         state_vector[x][y] = c;
-        color(x,y);
-        //check_end(c);
-        //cout << a_counter << endl;
+        color(x,y,false);
         return true;
     }
     else
     {
         return false;
+    }
+}
+
+void GameMaster::predict_state(int x, int y,char c)
+{
+    if(state_vector[x][y] == 'a' )
+    {
+        cout << "predict state fut" << endl;
+        color(x,y,true);
     }
 }
