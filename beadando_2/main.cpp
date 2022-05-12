@@ -19,6 +19,7 @@ struct W : public Window
 
 int main()
 {
+    ///minimax algoritmus
     W w;
     w.init();
     w.~W();

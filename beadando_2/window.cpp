@@ -80,17 +80,19 @@ void Window::paint(int focus)
             else if(gm.state_vector[i/8][i%8] == 'p')
             {
                 pb->draw(2);
-                cout << "predict" << endl;
             }
             else
                 pb->draw(0);
         }
     }
+    gm.check_end(c);
     gout << refresh;
 }
 
 void Window::event_loop()
 {
+    int x;
+    int y;
     int focus = -1;
     pass_values();
     paint(focus);
@@ -102,7 +104,9 @@ void Window::event_loop()
                 if (widgets[i]->is_selected(ev.pos_x, ev.pos_y))
                 {
                     focus = i;
-                    gm.predict_state(ev.pos_y/40-1, ev.pos_x/40-1,true);
+                    x = ev.pos_y/40-1;
+                    y = ev.pos_x/40-1;
+                    gm.predict_state(x,y,c);
                 }
         if (focus!=-1)
             widgets[focus]->handle(ev);
