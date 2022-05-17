@@ -26,9 +26,9 @@ void Window::pass_values()
         {
             if(pb->get_current_value()==true)
             {
-                if(c == 'o' && gm.set_state(i/8,i%8,'o'))
+                if(c == 'o' && gm.slayer_move(i/8,i%8,'o'))
                 {
-                    c = 'x';
+                    //c = 'x';
                 }
                 else if(gm.set_state(i/8,i%8,'x'))
                 {
