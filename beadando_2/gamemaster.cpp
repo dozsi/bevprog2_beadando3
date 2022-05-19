@@ -4,14 +4,6 @@
 #include <algorithm>
 using namespace std;
 
-struct GameMaster::MiniMaxResult
-{
-public:
-    int x;
-    int y;
-    int score;
-};
-
 GameMaster::GameMaster()
 {
 }
@@ -37,7 +29,6 @@ void GameMaster::init(char c)
         temp.clear();
     }
     available(c);
-    ///Mi vagyunk a fidesz ---> x
     current = c;
 }
 char GameMaster::get_state(int x, int y)
@@ -46,35 +37,33 @@ char GameMaster::get_state(int x, int y)
 }
 void GameMaster::color(int x,int y,bool prediction)
 {
-    int counter = 0;
-    for(int i = -1;i <= 1;i++)
+    if(prediction)
     {
-        for(int j = -1;j <= 1;j++)
+        int counter = 0;
+        for(int i = -1;i <= 1;i++)
         {
-            counter =  get_available(x,y,i,j);
-            //cout << counter << endl;
-            for(int k = 1; k <= counter;k++)
+            for(int j = -1;j <= 1;j++)
             {
-                if(prediction)
+                counter =  get_available(x,y,i,j);
+                //cout << counter << endl;
+                for(int k = 1; k <= counter;k++)
                 {
-                    state_vector[x+(i*k)][y+(j*k)] = 'x';
-                    cout << "hello darkness my old friend" << endl;
-                }
-                else
-                {
-                    state_vector[x+(i*k)][y+(j*k)] = state_vector[x][y];
+                        state_vector[x+(i*k)][y+(j*k)] = 'p';
                 }
             }
         }
     }
-//    for(int k = 0; k < 8; k++)
-//    {
-//        for(int l = 0; l < 8; l++)
-//        {
-//            cout << get_state(k,l);
-//        }
-//        cout << endl;
-//    }
+    else
+    {
+        for(int k = 0; k < 8; k++)
+        {
+            for(int l = 0; l < 8; l++)
+            {
+                if(state_vector[k][l] == 'p')
+                    state_vector[k][l] = current;
+            }
+        }
+    }
 }
 int GameMaster::get_available(int x,int y, int ix, int iy)
 {
@@ -103,6 +92,7 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
         }
         else if(state_vector[_x][_y] == state_vector[x][y])
         {
+            //cout << "talalt veget" << endl;
             ok2 = true;
             break;
         }
@@ -125,29 +115,17 @@ int GameMaster::get_available(int x,int y, int ix, int iy)
 void GameMaster::available(char c)
 {
     for(int k = 0; k < 8; k++)
-    {
         for(int l = 0; l < 8; l++)
-        {
             if(state_vector[k][l] == ' ')
             {
                 state_vector[k][l] = c;
                 for(int i = -1;i <= 1;i++)
-                {
                     for(int j = -1;j <= 1;j++)
-                    {
                         if(get_available(k,l,i,j) > 0)
-                        {
                             state_vector[k][l] = 'a';
-                        }
-                    }
-                }
                 if(state_vector[k][l] == c)
-                {
                     state_vector[k][l] = ' ';
-                }
             }
-        }
-    }
 }
 void GameMaster::reset_available()
 {
@@ -155,9 +133,17 @@ void GameMaster::reset_available()
     {
         for(int l = 0; l < 8; l++)
         {
-            if(state_vector[k][l] == 'a' || state_vector[k][l] == 'p')
+            if(state_vector[k][l] == 'a')
             {
                 state_vector[k][l] = ' ';
+            }
+            if(state_vector[k][l] == 'p')
+            {
+                if(current == 'o')
+                    state_vector[k][l] = 'x';
+                else
+                    state_vector[k][l] = 'o';
+
             }
         }
     }
@@ -168,6 +154,7 @@ void GameMaster::counter()
     o_counter = 0;
     x_counter = 0;
     a_counter = 0;
+    p_counter = 0;
     for(const vector<char> &cv : state_vector)
     {
         for(char c: cv)
@@ -178,11 +165,12 @@ void GameMaster::counter()
                 o_counter++;
             else if( c == 'x')
                 x_counter++;
+            else if( c == 'p')
+                p_counter++;
             else
                 a_counter++;
         }
     }
-    //cout << "empty: " << e_counter << " O: " << o_counter << " X: " << x_counter << " A: " << a_counter << " sum: " << e_counter+o_counter+x_counter+a_counter << endl;
 }
 bool GameMaster::check_end(char c)
 {
@@ -206,20 +194,6 @@ bool GameMaster::set_state(int x, int y,char c)
         return false;
     }
 }
-bool GameMaster::slayer_move(int x, int y,char c)
-{
-    if(state_vector[x][y] == 'a' )
-    {
-        MiniMaxResult result;
-        set_state(x,y,'o');
-        result = minimize(0,0,10);
-        state_vector[result.x][result.y] = 'x';
-        color(result.x,result.y,false);
-        cout << result.x << " " << result.y << endl;
-        return true;
-    }
-    return false;
-}
 
 void GameMaster::predict_state(int x, int y,char c)
 {
@@ -230,100 +204,4 @@ void GameMaster::predict_state(int x, int y,char c)
         color(x,y,true);
         state_vector[x][y] ='a';
     }
-}
-
-GameMaster::MiniMaxResult GameMaster::minimize(int x, int y,int dpt)
-{
-    int _a_counter = a_counter;
-    int _e_counter = e_counter;
-    int _x_counter = x_counter;
-    int _o_counter = o_counter;
-    int _p_counter = p_counter;
-    std::vector<std::vector<char>> _state_vector = state_vector;
-    MiniMaxResult result;
-    MiniMaxResult result2;
-    result.score = INT32_MAX;
-    counter();
-    if(dpt >0)
-    for(int k = 0; k < 8; k++)
-    {
-        for(int l = 0; l < 8; l++)
-        {
-            if(state_vector[k][l] == 'a')
-            {
-                //state_vector[k][l] = 'o';
-                set_state(k,l,'o');
-                MiniMaxResult result1 = maximize(k,l,dpt-1);
-                if(result1.score < result.score)
-                    result = result1;
-                state_vector[k][l] = 'a';
-            }
-        }
-    }
-    if(result.score == INT32_MAX)
-    {
-        if(o_counter == p_counter)
-            result2={x,y,0};
-        if(o_counter > p_counter)
-           result2= {x,y,o_counter};
-        else
-           result2= {x,y,-p_counter};
-    }
-    else
-        result2=result;
-     a_counter = _a_counter;
-     e_counter = _e_counter;
-     x_counter = _x_counter;
-     o_counter = _o_counter;
-     p_counter = _p_counter;
-     state_vector = _state_vector;
-     return result2;
-}
-
-GameMaster::MiniMaxResult GameMaster::maximize(int x, int y,int dpt)
-{
-    int _a_counter = a_counter;
-    int _e_counter = e_counter;
-    int _x_counter = x_counter;
-    int _o_counter = o_counter;
-    int _p_counter = p_counter;
-    std::vector<std::vector<char>> _state_vector = state_vector;
-    MiniMaxResult result;
-    MiniMaxResult result2;
-    result.score = INT32_MAX;
-    counter();
-    if(dpt >0)
-    for(int k = 0; k < 8; k++)
-    {
-        for(int l = 0; l < 8; l++)
-        {
-            if(state_vector[k][l] == 'a')
-            {
-                //state_vector[k][l] = 'o';
-                set_state(k,l,'x');
-                MiniMaxResult result1 = minimize(k,l,dpt-1);
-                if(result1.score > result.score)
-                    result = result1;
-                state_vector[k][l] = 'a';
-            }
-        }
-    }
-    if(result.score == INT32_MAX)
-    {
-        if(p_counter == o_counter)
-            result2={x,y,0};
-        if(p_counter > o_counter)
-           result2= {x,y,p_counter};
-        else
-           result2= {x,y,-o_counter};
-    }
-    else
-        result2=result;
-     a_counter = _a_counter;
-     e_counter = _e_counter;
-     x_counter = _x_counter;
-     o_counter = _o_counter;
-     p_counter = _p_counter;
-     state_vector = _state_vector;
-     return result2;
 }

@@ -15,6 +15,7 @@ void Window::init()
     gout << font("LiberationSans-Regular.ttf",30);
     c = 'x';
     gm.init(c);
+    end = false;
     event_loop();
 }
 void Window::pass_values()
@@ -26,9 +27,9 @@ void Window::pass_values()
         {
             if(pb->get_current_value()==true)
             {
-                if(c == 'o' && gm.slayer_move(i/8,i%8,'o'))
+                if(c == 'o' && gm.set_state(i/8,i%8,'o'))
                 {
-                    //c = 'x';
+                    c = 'x';
                 }
                 else if(gm.set_state(i/8,i%8,'x'))
                 {
@@ -51,6 +52,7 @@ void Window::pass_values()
         }
         if(!change && gm.check_end('o') && gm.check_end('x'))
         {
+            end = true;
             cout << "O: " << gm.o_counter << " X: " << gm.x_counter <<  endl;
         }
     }
@@ -59,38 +61,65 @@ void Window::pass_values()
 
 void Window::paint(int focus)
 {
-    for(int i = 0; i <  widgets.size(); i++)
+    if(end)
     {
-        if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
-        {
-            if(gm.state_vector[i/8][i%8] == 'x')
-                pb->set_current_text("X");
-            if(gm.state_vector[i/8][i%8] == 'o')
-                pb->set_current_text("O");
-        }
+        gout << color(0,0,0) << move_to(0,0) << box(400,400);
+        if(gm.o_counter > gm.x_counter)
+            gout << color(250,250,250) << move_to(150,200) << text("O nyert");
+        else if (gm.o_counter < gm.x_counter)
+            gout << color(250,250,250) << move_to(150,200) << text("X nyert");
+        else
+            gout << color(250,250,250) << move_to(150,200) << text("Dontetlen");
     }
-    for (int i = 0; i <  widgets.size(); i++)
+    else
     {
-        if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
+
+        for(int i = 0; i <  widgets.size(); i++)
         {
-            if(gm.state_vector[i/8][i%8] == 'a')
+            if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
             {
-                pb->draw(1);
+                if(gm.state_vector[i/8][i%8] == 'x')
+                    pb->set_current_text("X");
+                if(gm.state_vector[i/8][i%8] == 'o')
+                    pb->set_current_text("O");
             }
-            else if(gm.state_vector[i/8][i%8] == 'p')
-            {
-                pb->draw(2);
-                cout << "predict" << endl;
-            }
-            else
-                pb->draw(0);
         }
+        for (int i = 0; i <  widgets.size(); i++)
+        {
+            if (auto* pb = dynamic_cast<PushButton*>(widgets[i]))
+            {
+                if(gm.state_vector[i/8][i%8] == 'a')
+                {
+                    pb->draw(1);
+                }
+                else if(gm.state_vector[i/8][i%8] == 'p')
+                {
+                    pb->draw(2);
+                }
+                else
+                    pb->draw(0);
+            }
+        }
+        if(end)
+        {
+            gout << color(0,0,0) << move_to(0,0) << box(400,400);
+            if(gm.o_counter > gm.x_counter)
+                gout << color(250,250,250) << move_to(150,200) << text("X nyert");
+            else if (gm.o_counter < gm.x_counter)
+                gout << color(250,250,250) << move_to(150,200) << text("O nyert");
+            else
+                gout << color(250,250,250) << move_to(150,200) << text("Dontetlen");
+        }
+
+        gm.check_end(c);
     }
     gout << refresh;
 }
 
 void Window::event_loop()
 {
+    int x;
+    int y;
     int focus = -1;
     pass_values();
     paint(focus);
@@ -102,7 +131,9 @@ void Window::event_loop()
                 if (widgets[i]->is_selected(ev.pos_x, ev.pos_y))
                 {
                     focus = i;
-                    gm.predict_state(ev.pos_y/40-1, ev.pos_x/40-1,true);
+                    x = ev.pos_y/40-1;
+                    y = ev.pos_x/40-1;
+                    gm.predict_state(x,y,c);
                 }
         if (focus!=-1)
             widgets[focus]->handle(ev);

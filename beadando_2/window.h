@@ -8,6 +8,7 @@ protected:
     std::vector<Widget *> widgets;
     GameMaster gm;
     char c;
+    bool end;
 public:
     Window();
     void event_loop();

@@ -6,12 +6,12 @@ class GameMaster
 {
 protected:
 public:
-    struct MiniMaxResult;
     GameMaster();
     int a_counter;
     int e_counter;
     int x_counter;
     int o_counter;
+    int p_counter;
     char current;
     std::vector<std::vector<char>> state_vector; ///b,w
     void init(char c);
@@ -24,9 +24,6 @@ public:
     void counter();
     bool check_end(char c);
     void predict_state(int x, int y,char c);
-    MiniMaxResult minimize(int x, int y,int dpt);
-    MiniMaxResult maximize(int x, int y,int dpt);
-    bool slayer_move(int x, int y,char c);
 };
 
 #endif // GAMEMASTER_H
