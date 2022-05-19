@@ -12,7 +12,6 @@ public:
     int e_counter;
     int x_counter;
     int o_counter;
-    int p_counter;
     char current;
     std::vector<std::vector<char>> state_vector; ///b,w
     void init(char c);
